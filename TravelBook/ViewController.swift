@@ -13,8 +13,12 @@ import CoreData
 
 class ViewController: UIViewController,MKMapViewDelegate, CLLocationManagerDelegate {
 
+    //MARK: - Variables
     var choosenLatitude = Double()
     var choosenLongitude = Double()
+    
+    var chosenTitle = ""
+    var chosenTitleId: UUID?
     
     //MARK: - Outlet
     @IBOutlet weak var mapView: MKMapView!
@@ -40,6 +44,14 @@ class ViewController: UIViewController,MKMapViewDelegate, CLLocationManagerDeleg
         let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(choosenLocation(gesturerecognizer:)))
         gestureRecognizer.minimumPressDuration = 3
         mapView.addGestureRecognizer(gestureRecognizer)
+        
+        if chosenTitle != "" {
+             //Core Data
+            
+            
+        }
+        
+        
     }
     
     @objc func choosenLocation(gesturerecognizer:UILongPressGestureRecognizer) {

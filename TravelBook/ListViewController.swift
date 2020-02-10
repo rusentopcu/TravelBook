@@ -7,13 +7,18 @@
 //
 
 import UIKit
-import  CoreData
+import CoreData
 
 class ListViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
 
+    //MARK: - Arrays
     var titleArray = [String]()
     var idArray = [UUID]()
 
+    //MARK: - Variables
+    var selectedTitle = ""
+    var selectedTitleId: UUID?
+    
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
@@ -27,7 +32,23 @@ class ListViewController: UIViewController, UITableViewDelegate,UITableViewDataS
         getData()
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toViewController" {
+            let destinationVC = segue.destination as! ViewController
+            destinationVC.chosenTitle = selectedTitle
+            destinationVC.chosenTitleId = selectedTitleId
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedTitle = titleArray[indexPath.row]
+        selectedTitleId = idArray[indexPath.row]
+        performSegue(withIdentifier: "toViewController", sender: self)
+    }
+    
+    
     @objc func addButtonClicked() {
+        selectedTitle = ""
         performSegue(withIdentifier: "toViewController", sender: nil)
     }
     
@@ -64,7 +85,7 @@ class ListViewController: UIViewController, UITableViewDelegate,UITableViewDataS
                     if let id = result.value(forKey: "id") as? UUID {
                         idArray.append(id)
                     }
-                    tableView.reloadData()
+                    self.tableView.reloadData()
                     
                 }
             
@@ -76,6 +97,13 @@ class ListViewController: UIViewController, UITableViewDelegate,UITableViewDataS
         }
         
         
+        
+        
     }
+    
 
+    
+    
+    
 }
+
