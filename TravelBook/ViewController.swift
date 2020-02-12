@@ -58,7 +58,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
             
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Places")
             let idString = chosenTitleId!.uuidString
-            let predicate = NSPredicate(format: "id = %@", idString)
+            fetchRequest.predicate = NSPredicate(format: "id = %@", idString)
             fetchRequest.returnsObjectsAsFaults = false
             
             do {
@@ -75,9 +75,6 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
                                     annotationLatitude = latitude
                                     if let longitude = result.value(forKey: "longitude") as? Double {
                                         annotationLongitude = longitude
-                                        if let longitude = result.value(forKey: "longitude") as? Double {
-                                            annotationLatitude = latitude
-                                            
                                             
                                             let annotation = MKPointAnnotation()
                                             annotation.title = annotationTitle
@@ -87,14 +84,18 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
                                             mapView.addAnnotation(annotation)
                                             nameText.text = annotationTitle
                                             commentText.text = annotationSubtitle
+                                        
+                                        location.stopUpdatingLocation()
+                                        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                                        let region = MKCoordinateRegion(center: coordinate, span: span)
+                                        mapView.setRegion(region, animated: true)
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            } catch {
+                }catch {
                 print("error")
             }
         }
@@ -125,10 +126,14 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     
     //MARK: - Functions
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if chosenTitle == "" {
         var location = CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude)
         var span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         var region = MKCoordinateRegion(center: location, span: span)
         mapView.setRegion(region, animated: true)
+        }else {
+            
+        }
     }
     
     
