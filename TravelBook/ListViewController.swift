@@ -32,6 +32,11 @@ class ListViewController: UIViewController, UITableViewDelegate,UITableViewDataS
         getData()
     }
     
+    //Observer ekleyerek veri eklendiği bilgisini alıyoruz.
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(getData), name: NSNotification.Name(rawValue: "newPlace"), object: nil)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toViewController" {
             let destinationVC = segue.destination as! ViewController
@@ -62,7 +67,7 @@ class ListViewController: UIViewController, UITableViewDelegate,UITableViewDataS
         return cell
     }
     
-    func getData() {
+    @objc func getData() {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let contex = appDelegate.persistentContainer.viewContext

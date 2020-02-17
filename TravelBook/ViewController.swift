@@ -86,7 +86,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
                                             commentText.text = annotationSubtitle
                                         
                                         location.stopUpdatingLocation()
-                                        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                                        let span = MKCoordinateSpan(latitudeDelta: 0.4, longitudeDelta: 0.4)
                                         let region = MKCoordinateRegion(center: coordinate, span: span)
                                         mapView.setRegion(region, animated: true)
                                         }
@@ -127,13 +127,38 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     //MARK: - Functions
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if chosenTitle == "" {
-        var location = CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude)
-        var span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        var region = MKCoordinateRegion(center: location, span: span)
+        let location = CLLocationCoordinate2D(latitude: locations[0].coordinate.latitude, longitude: locations[0].coordinate.longitude)
+        let span = MKCoordinateSpan(latitudeDelta: 0.4, longitudeDelta: 0.4)
+        let region = MKCoordinateRegion(center: location, span: span)
         mapView.setRegion(region, animated: true)
         }else {
             
         }
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        if annotation is MKUserLocation {
+            return nil
+        }
+        
+        let reuseId = "My Annotation"
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: "reuseId") as? MKPinAnnotationView
+        
+        if pinView == nil {
+            
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            
+            pinView?.canShowCallout = true
+            pinView?.tintColor = UIColor.black
+            
+            let button = UIButton(type: UIButton.ButtonType.detailDisclosure)
+            pinView?.rightCalloutAccessoryView = button
+        } else {
+            pinView?.annotation = annotation
+        }
+        
+        return pinView
     }
     
     
@@ -159,6 +184,9 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
             print("error")
         }
         
+        // MARK: - Diğer VC'a veri eklendiğini bildiriyoruz ve Save buttonuna tıklandıktan sonra diğer VC'ye otomatik geçişi sağlıyoruz
+        NotificationCenter.default.post(name: NSNotification.Name("newPlace"), object: nil)
+        navigationController?.popViewController(animated: true)
     }
     
 }
